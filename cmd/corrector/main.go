@@ -10,13 +10,12 @@ import (
 
 func main() {
     logger.SetLogger(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
-    logger.Info.Println("Hello, world")
 
     port := ":8080"
 
-    server.SetHandlers()
+    mux := server.GetMuxWithHandlers()
 	logger.Info.Println("Start Listening on port", port)
-	if err := http.ListenAndServe(port, nil); err != nil {
+	if err := http.ListenAndServe(port, mux); err != nil {
 		logger.Error.Println(err.Error())
 	}
 }

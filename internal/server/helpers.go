@@ -5,6 +5,7 @@ import (
     "net/http"
     "encoding/json"
     "io/ioutil"
+    "net/http/httputil"
 
     "github.com/lll-phill-lll/address_correction/api"
     "github.com/lll-phill-lll/address_correction/logger"
@@ -12,7 +13,13 @@ import (
 
 
 func logRequest(r *http.Request) {
-    logger.Info.Println(r.Method, r.URL)
+    requestDump, err := httputil.DumpRequest(r, true)
+    if err != nil {
+        logger.Error.Println(err)
+    }
+
+    logger.Info.Println(string(requestDump))
+    logger.Info.Println("misha")
 }
 
 func parseRequestBody(r *http.Request) (api.Request, error) {

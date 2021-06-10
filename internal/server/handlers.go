@@ -11,22 +11,23 @@ import (
 )
 
 
-func SetHandlers() {
-    http.HandleFunc("/hello", hello)
-    http.HandleFunc("/correct", correct)
+func GetMuxWithHandlers() *http.ServeMux {
+    mux := http.NewServeMux()
+
+    correctHandler := http.HandlerFunc(correct)
+    mux.Handle("/correct", checkRequestHandler(correctHandler))
+
+    helloHandler := http.HandlerFunc(hello)
+    mux.Handle("/hello", helloHandler)
+
+    return mux
 }
 
 func hello(w http.ResponseWriter, r *http.Request) {
-    logRequest(r)
     fmt.Fprintf(w, "hello\n")
 }
 
 func correct(w http.ResponseWriter, r *http.Request) {
-    logRequest(r)
-    if r.Method != "POST" {
-        fmt.Fprintf(w, "wrong method\n")
-    }
-
     request, err := parseRequestBody(r)
     if err != nil {
         fmt.Fprintf(w, err.Error() + "\n")
