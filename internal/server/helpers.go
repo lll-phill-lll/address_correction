@@ -1,47 +1,46 @@
 package server
 
 import (
-    "errors"
-    "net/http"
-    "encoding/json"
-    "io/ioutil"
-    "net/http/httputil"
+	"encoding/json"
+	"errors"
+	"io/ioutil"
+	"net/http"
+	"net/http/httputil"
 
-    "github.com/lll-phill-lll/address_correction/api"
-    "github.com/lll-phill-lll/address_correction/logger"
+	"github.com/lll-phill-lll/address_correction/api"
+	"github.com/lll-phill-lll/address_correction/logger"
 )
 
-
 func logRequest(r *http.Request) {
-    requestDump, err := httputil.DumpRequest(r, true)
-    if err != nil {
-        logger.Error.Println(err)
-    }
+	requestDump, err := httputil.DumpRequest(r, true)
+	if err != nil {
+		logger.Error.Println(err)
+	}
 
-    logger.Info.Println(string(requestDump))
-    logger.Info.Println("misha")
+	logger.Info.Println(string(requestDump))
+	logger.Info.Println("misha")
 }
 
 func parseRequestBody(r *http.Request) (api.Request, error) {
-    body, err := ioutil.ReadAll(r.Body)
-    if err != nil {
-        logger.Error.Println(err)
-        return api.Request{}, errors.New("can't read body")
-    }
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		logger.Error.Println(err)
+		return api.Request{}, errors.New("can't read body")
+	}
 
-    var request api.Request
+	var request api.Request
 
-    err = json.Unmarshal(body, &request)
-    if err != nil {
-        logger.Error.Println(err)
-        return api.Request{}, errors.New("can't unmarshal body")
-    }
+	err = json.Unmarshal(body, &request)
+	if err != nil {
+		logger.Error.Println(err)
+		return api.Request{}, errors.New("can't unmarshal body")
+	}
 
-    if request.InitialAddress == "" {
-        err = errors.New("empty initial body")
-        logger.Error.Println(err)
-        return api.Request{}, err
-    }
+	if request.InitialAddress == "" {
+		err = errors.New("empty initial body")
+		logger.Error.Println(err)
+		return api.Request{}, err
+	}
 
-    return request, nil
+	return request, nil
 }

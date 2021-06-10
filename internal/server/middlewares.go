@@ -1,19 +1,18 @@
 package server
 
 import (
-    "net/http"
+	"net/http"
 )
 
-
 func checkRequestHandler(next http.Handler) http.Handler {
-  return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-    logRequest(r)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logRequest(r)
 
-    if r.Method != "POST" {
-        http.Error(w, "Wrong method", http.StatusBadRequest)
-        return
-    }
+		if r.Method != "POST" {
+			http.Error(w, "Wrong method", http.StatusBadRequest)
+			return
+		}
 
-    next.ServeHTTP(w, r)
-  })
+		next.ServeHTTP(w, r)
+	})
 }
