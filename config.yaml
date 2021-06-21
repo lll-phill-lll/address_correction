@@ -1,3 +1,3 @@
 port: "8080"
-fias_data_path: "some_path"
+fias_data_path: "data/fias/krasnoyarsk.csv"
 
