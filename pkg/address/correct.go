@@ -2,8 +2,10 @@ package address
 
 import (
     "fmt"
+    parser "github.com/openvenues/gopostal/parser"
 )
 
 func Correct(address string) string {
-    return fmt.Sprintln("Hello", address)
+    parsed := parser.ParseAddress(address)
+    return fmt.Sprintln(parsed)
 }

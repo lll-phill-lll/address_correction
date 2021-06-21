@@ -1,0 +1,4 @@
+curl --header "Content-Type: application/json" \
+     --request POST \
+     --data '{"initial_address":"1-я, Хабаровская, 26 Красноярск","password":"xyz"}' \
+     http://localhost:8080/correct
