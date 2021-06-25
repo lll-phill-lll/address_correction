@@ -1,12 +1,12 @@
 package fiasdata
 
 type Address struct {
-    CityLong string
+	CityLong string
 
-    City string
-    StreetType string
-    FormalName string
-    HouseNum string
-    Corpus string
-    FIAS string
+	City       string
+	StreetType string
+	FormalName string
+	HouseNum   string
+	Korpus     string
+	FIAS       string
 }
