@@ -40,7 +40,7 @@ func FromCSV(path string) error {
 
 		address := Address{}
 		address.CityLong = strings.ToLower(row[CITY])
-		address.City = shortenCity(address.CityLong)
+		address.City = strings.ToLower(shortenCity(address.CityLong))
 		address.StreetType = strings.ToLower(row[STREETTYPE])
 		address.FormalName = strings.ToLower(row[FORMALNAME])
 		address.HouseNum = strings.ToLower(row[HOUSENUM])
@@ -61,5 +61,11 @@ func FromCSV(path string) error {
 }
 
 func shortenCity(city string) string {
-	return "красноярск"
+	splittedCity := strings.Split(city, ",")
+	cityPart := splittedCity[len(splittedCity)-1]
+
+	cityNameSplitted := strings.Split(cityPart, " ")
+	cityName := cityNameSplitted[len(cityNameSplitted)-1]
+
+	return cityName
 }

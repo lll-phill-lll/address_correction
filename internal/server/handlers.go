@@ -35,7 +35,9 @@ func correct(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	response := api.Response{CorrectAddress: address.Correct(request.InitialAddress), FIAS: "123"}
+	fias, correctedAddress := address.CorrectAndGetFIAS(request.InitialAddress)
+
+	response := api.Response{CorrectAddress: correctedAddress, FIAS: fias}
 
 	err = json.NewEncoder(w).Encode(response)
 	if err != nil {
