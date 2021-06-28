@@ -6,11 +6,16 @@ import requests
 
 addresses = pd.read_csv('corrected_krasn_100.csv')
 
-for i in range(3):
+found = 0
+found_correct = 0
+
+for i in range(len(addresses)):
     row = addresses.loc[[i]]
     address = row['address']
     fixed_address = row['fixed_address']
     fias = row['fias']
+    fias = str(fias).split('\n')[0].split()[1]
+    print(fias)
 
     krasn = "Красноярск"
     address = str(address).split('\n')[0]
@@ -23,4 +28,11 @@ for i in range(3):
     url = 'http://localhost:8080/correct'
     response = requests.post(url, data.encode('utf-8'), headers=headers)
     print(response)
-    print(response.text)
+    print(json.loads(response.text))
+    if json.loads(response.text)['fias'] != 'Not found':
+        if fias == json.loads(response.text)['fias']:
+            found_correct += 1
+        found += 1
+
+print('Total found:', found)
+print('Total found correct:', found_correct)
