@@ -4,6 +4,8 @@
 1. `cd binary`
 2. `./linux`
 
-# Example requests in example
+# Example requests:
+1. Navigate to `examples` folder
 
-# To test the solution run server and navigate to `tests/functional`. Follow the README there
+# To test the solution
+1. Run server and navigate to `tests/functional`. Follow the README there
