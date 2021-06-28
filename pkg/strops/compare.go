@@ -1,12 +1,11 @@
 package strops
 
 func LowerEqualWithErrors(str1 string, str2 string, errorsNum int) bool {
-    if levenshtein([]rune(str1), []rune(str2)) <= errorsNum {
-        return true
-    }
-    return false
+	if levenshtein([]rune(str1), []rune(str2)) <= errorsNum {
+		return true
+	}
+	return false
 }
-
 
 func levenshtein(str1, str2 []rune) int {
 	s1len := len(str1)

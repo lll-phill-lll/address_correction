@@ -2,7 +2,7 @@ package api
 
 type Request struct {
 	InitialAddress string `json:"initial_address"`
-	City string `json:"city"`
+	City           string `json:"city"`
 }
 
 type Response struct {
