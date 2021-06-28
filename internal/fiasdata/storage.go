@@ -2,6 +2,7 @@ package fiasdata
 
 import (
 	"github.com/lll-phill-lll/address_correction/logger"
+	"github.com/lll-phill-lll/address_correction/pkg/strops"
 	"strings"
 )
 
@@ -23,7 +24,7 @@ func (s *storage) GetFias(city string,
 	korpus string) string {
 	logger.Info.Println("Storage size:", len(s.Addresses))
 	for _, address := range s.Addresses {
-		if address.City == strings.ToLower(city) || city == "ANY" {
+        if strops.LowerEqualWithErrors(address.City, city, 0) || city == "ANY" {
 			if address.StreetType == strings.ToLower(street_type) || street_type == "ANY" {
 				if address.FormalName == strings.ToLower(street) || street == "ANY" {
 					if address.HouseNum == strings.ToLower(house_num) || house_num == "ANY" {
