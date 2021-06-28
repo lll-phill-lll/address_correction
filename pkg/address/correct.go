@@ -29,13 +29,13 @@ import (
 //     country_region: informal subdivision of a country without any political status
 //     country: sovereign nations and their dependent territories, anything with an ISO-3166 code.
 //     world_region: currently only used for appending “West Indies” after the country name, a pattern frequently used in the English-speaking Caribbean e.g. “Jamaica, West Indies”
-func CorrectAndGetFIAS(address string) (string, string) {
+func CorrectAndGetFIAS(address string, city string) (string, string) {
 	parsed_values := parser.ParseAddress(address)
 	logger.Info.Println("Parsed", address, "into", parsed_values)
 
 	street_name, street_type := "", ""
 	house_number := ""
-	city := "красноярск"
+	city = strings.ToLower(city)
 	road := ""
 
 	for _, parsed_value := range parsed_values {

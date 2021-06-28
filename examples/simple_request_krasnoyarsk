@@ -1,4 +1,4 @@
 curl --header "Content-Type: application/json" \
      --request POST \
-     --data '{"initial_address":"Ярыгинская набережная, 7 ","password":"xyz"}' \
+     --data '{"initial_address":"Ярыгинская набережная, 7 ","city":"Красноярск"}' \
      http://localhost:8080/correct
