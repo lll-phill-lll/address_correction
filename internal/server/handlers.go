@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/lll-phill-lll/address_correction/api"
 	"github.com/lll-phill-lll/address_correction/logger"
@@ -35,8 +36,19 @@ func correct(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	fias, correctedAddress := address.CorrectAndGetFIAS(request.InitialAddress,
-		request.City)
+	initialAddress, err := url.QueryUnescape(request.InitialAddress)
+	if err != nil {
+		fmt.Fprintf(w, err.Error()+"\n")
+		return
+	}
+
+	city, err := url.QueryUnescape(request.City)
+	if err != nil {
+		fmt.Fprintf(w, err.Error()+"\n")
+		return
+	}
+
+	fias, correctedAddress := address.CorrectAndGetFIAS(initialAddress, city)
 
 	response := api.Response{CorrectAddress: correctedAddress, FIAS: fias}
 

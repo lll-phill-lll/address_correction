@@ -18,7 +18,6 @@ func logRequest(r *http.Request) {
 	}
 
 	logger.Info.Println(string(requestDump))
-	logger.Info.Println("misha")
 }
 
 func parseRequestBody(r *http.Request) (api.Request, error) {

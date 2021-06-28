@@ -42,7 +42,6 @@ func CorrectAndGetFIAS(address string, city string) (string, string) {
 		if parsed_value.Label == "road" {
 			road = parsed_value.Value
 			logger.Info.Println("Found road:", road)
-			street_name, street_type = SpiltRoadIntoNameAndType(road)
 		}
 		if parsed_value.Label == "house_number" {
 			house_number = parsed_value.Value
@@ -54,7 +53,11 @@ func CorrectAndGetFIAS(address string, city string) (string, string) {
 	if road != "" {
 		logger.Info.Println("Found road:", road)
 		street_name, street_type = SpiltRoadIntoNameAndType(road)
+		logger.Info.Println("Split results:", street_name, street_type)
 		street_type = StreetTypeToCanonical(street_type)
+		if street_type == "" {
+			street_type = "ANY"
+		}
 	}
 
 	korpus := "ANY"
@@ -74,18 +77,13 @@ func SpiltRoadIntoNameAndType(road string) (string, string) {
 		return road, ""
 	}
 
-	street_type := ""
-	street_name := ""
-
 	if IsStreetType(splitted_road[1]) {
-		street_type = splitted_road[1]
-		street_name = splitted_road[0]
+		return splitted_road[0], splitted_road[1]
 	} else if IsStreetType(splitted_road[0]) {
-		street_type = splitted_road[0]
-		street_name = splitted_road[1]
+		return splitted_road[1], splitted_road[0]
 	}
 
-	return street_name, street_type
+	return road, ""
 }
 
 func Split(r rune) bool {
@@ -93,13 +91,29 @@ func Split(r rune) bool {
 }
 
 func IsStreetType(street_type string) bool {
-	return true
+	return StreetTypeToCanonical(street_type) != ""
 }
 
 func StreetTypeToCanonical(street_type string) string {
-	if street_type == "набережная" {
+	if street_type == "" {
+		return street_type
+	}
+	// canonical_names := []string{'ул', 'пер', 'пл', 'мкр', 'проезд', 'ост-в', 'тракт', 'пр-кт', 'б-р', 'тер', 'ш', 'наб', 'снт'}
+	if street_type == "набережная" || street_type == "набер" || street_type == "набереж" || street_type == "набережн" {
 		return "наб"
 	}
 
-	return street_type
+	if street_type == "переулок" || street_type == "переул" {
+		return "пер"
+	}
+
+	if street_type == "улица" || street_type == "у" {
+		return "ул"
+	}
+
+	if street_type == "площадь" || street_type == "п" || street_type == "площ" {
+		return "пл"
+	}
+
+	return ""
 }
