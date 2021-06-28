@@ -1,3 +1,4 @@
+// +build linux,amd64,go1.15,!cgo
 package main
 
 import (

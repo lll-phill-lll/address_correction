@@ -1,9 +1,9 @@
 # address_correction
 
-# To run:
-1. `cd cmd/corrector`
-2. `go build`
-3. `./corrector`
+# To run on linux:
+1. `cd binary`
+2. `./linux`
 
-# Example:
-curl --header "Content-Type: application/json" \\n  --request POST \\n  --data '{"username":"xyz","password":"xyz"}' \\n  http://localhost:8080/correct
+# Example requests in example
+
+# To test the solution run server and navigate to `tests/functional`. Follow the README there
