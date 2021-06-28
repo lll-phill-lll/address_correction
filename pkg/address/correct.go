@@ -30,6 +30,13 @@ import (
 //     country: sovereign nations and their dependent territories, anything with an ISO-3166 code.
 //     world_region: currently only used for appending “West Indies” after the country name, a pattern frequently used in the English-speaking Caribbean e.g. “Jamaica, West Indies”
 func CorrectAndGetFIAS(address string, city string) (string, string) {
+	// TODO move to preprocess function
+	address = strings.ReplaceAll(address, "(", " ")
+	address = strings.ReplaceAll(address, ")", " ")
+	address = strings.ReplaceAll(address, "№", " ")
+	address = strings.ReplaceAll(address, " стр ", " корпус ")
+	address = strings.ReplaceAll(address, " стр.", " корпус ")
+
 	parsed_values := parser.ParseAddress(address)
 	logger.Info.Println("Parsed", address, "into", parsed_values)
 
@@ -60,10 +67,14 @@ func CorrectAndGetFIAS(address string, city string) (string, string) {
 		}
 	}
 
-	korpus := "ANY"
-	correctedAddress := fmt.Sprintln("city, street_type, street_name, house_number, korpus:", city, street_type, street_name, house_number, korpus)
+	house_number, korpus := SplitHouseNumberToNumberAndKorpus(house_number)
+	if korpus == "" {
+		korpus = "ANY"
+	}
+	correctedAddress := fmt.Sprintf("City: %s\nStreet_type: %s\nStreet_name: %s\nHouse_number: %s\nKorpus: %s", city, street_type, street_name, house_number, korpus)
+
 	logger.Info.Println(correctedAddress)
-	fias := fiasdata.Storage.GetFias(city, street_type, street_name, house_number, "ANY")
+	fias := fiasdata.Storage.GetFias(city, street_type, street_name, house_number, korpus)
 
 	return fias, correctedAddress
 }
@@ -98,22 +109,58 @@ func StreetTypeToCanonical(street_type string) string {
 	if street_type == "" {
 		return street_type
 	}
-	// canonical_names := []string{'ул', 'пер', 'пл', 'мкр', 'проезд', 'ост-в', 'тракт', 'пр-кт', 'б-р', 'тер', 'ш', 'наб', 'снт'}
-	if street_type == "набережная" || street_type == "набер" || street_type == "набереж" || street_type == "набережн" {
-		return "наб"
-	}
 
-	if street_type == "переулок" || street_type == "переул" {
-		return "пер"
+	street_type = strings.ReplaceAll(street_type, ".", "")
+	// TODO: sort and find
+	canonical_names := []string{"ул", "пер", "пл", "мкр", "проезд", "ост-в", "тракт", "пр-кт", "б-р", "тер", "ш", "наб", "снт"}
+
+	for _, canonical_name := range canonical_names {
+		if street_type == canonical_name {
+			return street_type
+		}
 	}
 
 	if street_type == "улица" || street_type == "у" {
 		return "ул"
 	}
 
+	if street_type == "переулок" || street_type == "переул" {
+		return "пер"
+	}
+
 	if street_type == "площадь" || street_type == "п" || street_type == "площ" {
 		return "пл"
 	}
 
+	if street_type == "микрорайон" || street_type == "микр" || street_type == "микро" {
+		return "мкр"
+	}
+
+	if street_type == "проезд" || street_type == "проез" {
+		return "проезд"
+	}
+
+	if street_type == "набережная" || street_type == "набер" || street_type == "набереж" || street_type == "набережн" {
+		return "наб"
+	}
+
+	if street_type == "проспект" || street_type == "пр" {
+		return "пр-кт"
+	}
+
 	return ""
+}
+
+func SplitHouseNumberToNumberAndKorpus(houseNumber string) (string, string) {
+	// TODO change to regex
+	korpusLabels := []string{"стр.", "корп.", "строение", "корпус"}
+
+	for _, korpusLabel := range korpusLabels {
+		splittedHouseNumber := strings.Split(houseNumber, korpusLabel)
+		if len(splittedHouseNumber) == 2 {
+			return strings.TrimSpace(splittedHouseNumber[0]),
+				strings.TrimSpace(splittedHouseNumber[1])
+		}
+	}
+	return houseNumber, ""
 }
