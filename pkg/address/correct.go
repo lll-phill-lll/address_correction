@@ -5,6 +5,7 @@ import (
 	"github.com/lll-phill-lll/address_correction/internal/fiasdata"
 	"github.com/lll-phill-lll/address_correction/logger"
 	parser "github.com/openvenues/gopostal/parser"
+	"regexp"
 	"strings"
 )
 
@@ -36,6 +37,9 @@ func CorrectAndGetFIAS(address string, city string) (string, string) {
 	address = strings.ReplaceAll(address, "№", " ")
 	address = strings.ReplaceAll(address, " стр ", " корпус ")
 	address = strings.ReplaceAll(address, " стр.", " корпус ")
+
+	space := regexp.MustCompile(`\s+`)
+	address = space.ReplaceAllString(address, " ")
 
 	parsed_values := parser.ParseAddress(address)
 	logger.Info.Println("Parsed", address, "into", parsed_values)
@@ -80,18 +84,21 @@ func CorrectAndGetFIAS(address string, city string) (string, string) {
 }
 
 func SpiltRoadIntoNameAndType(road string) (string, string) {
-	splitted_road := strings.FieldsFunc(road, Split)
-	logger.Info.Println("Splitted:", road, "to", splitted_road)
+	splittedRoad := strings.FieldsFunc(road, Split)
+	logger.Info.Println("Splitted:", road, "to", splittedRoad)
 
-	if len(splitted_road) == 1 {
+	elementsNum := len(splittedRoad)
+	logger.Info.Println("elements:", elementsNum)
+
+	if len(splittedRoad) == 1 {
 		// TODO consider returning ANY
 		return road, ""
 	}
 
-	if IsStreetType(splitted_road[1]) {
-		return splitted_road[0], splitted_road[1]
-	} else if IsStreetType(splitted_road[0]) {
-		return splitted_road[1], splitted_road[0]
+	if IsStreetType(splittedRoad[elementsNum-1]) {
+		return strings.Join(splittedRoad[:elementsNum-1], " "), splittedRoad[elementsNum-1]
+	} else if IsStreetType(splittedRoad[0]) {
+		return strings.Join(splittedRoad[1:], " "), splittedRoad[0]
 	}
 
 	return road, ""
@@ -118,6 +125,18 @@ func StreetTypeToCanonical(street_type string) string {
 		if street_type == canonical_name {
 			return street_type
 		}
+	}
+
+	if street_type == "шоссе" || street_type == "шос" || street_type == "шосс" {
+		return "б-р"
+	}
+
+	if street_type == "бульвар" || street_type == "бул" || street_type == "бульв" {
+		return "б-р"
+	}
+
+	if street_type == "остров" || street_type == "ост" {
+		return "ост-в"
 	}
 
 	if street_type == "улица" || street_type == "у" {

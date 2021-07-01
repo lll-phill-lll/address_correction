@@ -22,7 +22,7 @@ for i in range(len(addresses)):
     address = str(address).split('\n')[0]
     ind = address.find(krasn)
     address = address[ind + len(krasn):]
-    print(colored(address, 'yellow'))
+    print(i, colored(address, 'yellow'))
     data = json.dumps({'initial_address': address, 'city': 'Красноярск'})
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
