@@ -30,6 +30,7 @@ for i in range(len(addresses)):
     response = requests.post(url, data.encode('utf-8'), headers=headers)
     print(json.loads(response.text)['corrected_address'])
     if json.loads(response.text)['fias'] != 'Not found':
+        print("Fias:", json.loads(response.text)['fias'])
         if fias == json.loads(response.text)['fias']:
             found_correct += 1
             print(colored('Correct', 'green'))
