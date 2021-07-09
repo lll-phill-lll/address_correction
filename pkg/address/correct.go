@@ -1,7 +1,7 @@
 package address
 
 import (
-	"fmt"
+	"github.com/lll-phill-lll/address_correction/api"
 	"github.com/lll-phill-lll/address_correction/internal/fiasdata"
 	"github.com/lll-phill-lll/address_correction/logger"
 	parser "github.com/openvenues/gopostal/parser"
@@ -30,7 +30,7 @@ import (
 //     country_region: informal subdivision of a country without any political status
 //     country: sovereign nations and their dependent territories, anything with an ISO-3166 code.
 //     world_region: currently only used for appending “West Indies” after the country name, a pattern frequently used in the English-speaking Caribbean e.g. “Jamaica, West Indies”
-func CorrectAndGetFIAS(address string, city string) (string, string) {
+func CorrectAndGetFIAS(address string, city string) (string, api.CorrectAddress) {
 	// TODO move to preprocess function
 	address = strings.ReplaceAll(address, "(", " ")
 	address = strings.ReplaceAll(address, ")", " ")
@@ -75,7 +75,7 @@ func CorrectAndGetFIAS(address string, city string) (string, string) {
 	if korpus == "" {
 		korpus = "ANY"
 	}
-	correctedAddress := fmt.Sprintf("City: %s\nStreet_type: %s\nStreet_name: %s\nHouse_number: %s\nKorpus: %s", city, street_type, street_name, house_number, korpus)
+	correctedAddress := api.CorrectAddress{city, street_type, street_name, house_number, korpus}
 
 	logger.Info.Println(correctedAddress)
 	fias := fiasdata.Storage.GetFias(city, street_type, street_name, house_number, korpus)

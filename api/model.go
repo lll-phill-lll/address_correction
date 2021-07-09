@@ -5,7 +5,15 @@ type Request struct {
 	City           string `json:"city"`
 }
 
+type CorrectAddress struct {
+	City        string `json:"city"`
+	StreetType  string `json:"street_type"`
+	StreetName  string `json:"street_name"`
+	HouseNumber string `json:"house_number"`
+	Korpus      string `json:"korpus"`
+}
+
 type Response struct {
-	CorrectAddress string `json:"corrected_address"`
-	FIAS           string `json:"fias"`
+	CorrectedAddress CorrectAddress `json:"corrected_address"`
+	FIAS             string         `json:"fias"`
 }

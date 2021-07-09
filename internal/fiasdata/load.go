@@ -46,10 +46,6 @@ func FromCSV(path string) error {
 		address.HouseNum = strings.ToLower(row[HOUSENUM])
 		address.FIAS = row[HOUSEGUID]
 
-		if address.FormalName == "республики" {
-			logger.Info.Println(row)
-		}
-
 		if row[KORPUS] != "NULL" {
 			address.Korpus = row[KORPUS]
 		} else if row[STROENIE] != "NULL" {

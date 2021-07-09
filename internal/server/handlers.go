@@ -50,7 +50,7 @@ func correct(w http.ResponseWriter, r *http.Request) {
 
 	fias, correctedAddress := address.CorrectAndGetFIAS(initialAddress, city)
 
-	response := api.Response{CorrectAddress: correctedAddress, FIAS: fias}
+	response := api.Response{CorrectedAddress: correctedAddress, FIAS: fias}
 
 	err = json.NewEncoder(w).Encode(response)
 	if err != nil {
