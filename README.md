@@ -7,6 +7,11 @@ This command will run the server with config file from `binary/config.yaml`.
 In this file you can change port and fias data file. To see the format go to
 `data/fias`
 
+# Docker:
+1. `docker build -t address_corrector:1.0 .`
+2. `docker run -p <your_port>:8080 address_corrector:1.0`
+
+
 # Example requests:
 ## Request:
 ```
