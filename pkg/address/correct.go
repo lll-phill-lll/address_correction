@@ -47,6 +47,7 @@ func CorrectAndGetFIAS(address string, city string) (string, api.CorrectAddress)
 	street_name, street_type := "", ""
 	house_number := ""
 	road := ""
+	city_with_error := ""
 
 	for _, parsed_value := range parsed_values {
 		if parsed_value.Label == "road" {
@@ -62,9 +63,15 @@ func CorrectAndGetFIAS(address string, city string) (string, api.CorrectAddress)
 				city = parsed_value.Value
 			}
 		}
+		if parsed_value.Label == "house" {
+			city_with_error = parsed_value.Value
+		}
 	}
 
 	city = getCityName(city)
+	if city == "" {
+		city = city_with_error
+	}
 	if city != "ANY" {
 		city = strings.ToLower(city)
 	}

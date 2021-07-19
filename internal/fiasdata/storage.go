@@ -12,11 +12,14 @@ var Storage storage
 
 // TODO use maps
 type storage struct {
-	Addresses []Address
+	Addresses map[string][]Address
 }
 
 func SetNewStorage(addresses []Address) {
-	Storage = storage{addresses}
+	Storage = storage{make(map[string][]Address)}
+	for _, address := range addresses {
+		Storage.AddAddress(address)
+	}
 }
 
 const (
@@ -52,16 +55,41 @@ func areStreetsEqual(correct string, given string, iter int) bool {
 	return false
 }
 
+func (s *storage) AddAddress(address Address) {
+	s.Addresses[address.City] = append(s.Addresses[address.City], address)
+}
+
+func (s *storage) FindCityWithErrors(city string, maxErrors int) string {
+
+	for i := 0; i != maxErrors; i++ {
+		for storedCity, _ := range s.Addresses {
+			if strops.LowerEqualWithErrors(storedCity, city, i) {
+				return storedCity
+			}
+		}
+	}
+	return ""
+}
+
 func (s *storage) GetFias(city string,
 	street_type string,
 	street string,
 	house_num string,
 	korpus string) string {
-	logger.Info.Println("Storage size:", len(s.Addresses))
+
+	cityAddresses, ok := s.Addresses[city]
+	if !ok {
+		correctedCity := s.FindCityWithErrors(city, 3)
+
+		if correctedCity == "" {
+			return "No such city loaded"
+		}
+
+		cityAddresses = s.Addresses[correctedCity]
+	}
 
 	for i := 0; i != 3; i++ {
-
-		for _, address := range s.Addresses {
+		for _, address := range cityAddresses {
 			if strops.LowerEqualWithErrors(address.City, city, 0) || city == "ANY" {
 				if address.StreetType == strings.ToLower(street_type) || street_type == "ANY" {
 					if areStreetsEqual(address.FormalName, street, i) {
