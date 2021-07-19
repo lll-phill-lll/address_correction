@@ -71,42 +71,59 @@ func (s *storage) FindCityWithErrors(city string, maxErrors int) string {
 	return ""
 }
 
-func (s *storage) GetFias(city string,
+// expects city to be in s.Addresses
+func (s *storage) findFIASInCity(city string,
 	street_type string,
 	street string,
 	house_num string,
-	korpus string) string {
-
-	cityAddresses, ok := s.Addresses[city]
-	if !ok {
-		correctedCity := s.FindCityWithErrors(city, 3)
-
-		if correctedCity == "" {
-			return "No such city loaded"
-		}
-
-		cityAddresses = s.Addresses[correctedCity]
-	}
+	korpus string) Address {
 
 	for i := 0; i != 3; i++ {
-		for _, address := range cityAddresses {
-			if strops.LowerEqualWithErrors(address.City, city, 0) || city == "ANY" {
-				if address.StreetType == strings.ToLower(street_type) || street_type == "ANY" {
-					if areStreetsEqual(address.FormalName, street, i) {
-						if address.HouseNum == strings.ToLower(house_num) || house_num == "ANY" {
-							logger.Info.Println(address)
-							if address.Korpus == strings.ToLower(korpus) || korpus == "ANY" {
-								logger.Info.Println("Found address", address)
-								return address.FIAS
+		for _, address := range s.Addresses[city] {
+			if address.StreetType == strings.ToLower(street_type) || street_type == "ANY" {
+				if areStreetsEqual(address.FormalName, street, i) {
+					if address.HouseNum == strings.ToLower(house_num) || house_num == "ANY" {
+						logger.Info.Println(address)
+						if address.Korpus == strings.ToLower(korpus) || korpus == "ANY" {
+							logger.Info.Println("Found address", address)
+							return address
 
-							}
 						}
 					}
-
 				}
-
 			}
 		}
 	}
-	return "Not found"
+
+	return Address{}
+}
+
+func (s *storage) GetAddress(city string,
+	street_type string,
+	street string,
+	house_num string,
+	korpus string) Address {
+
+	if city != "ANY" {
+		_, ok := s.Addresses[city]
+		if !ok {
+			correctedCity := s.FindCityWithErrors(city, 3)
+
+			if correctedCity == "" {
+				return Address{}
+			}
+			return s.findFIASInCity(correctedCity, street_type, street, house_num, korpus)
+		} else {
+			return s.findFIASInCity(city, street_type, street, house_num, korpus)
+		}
+	}
+
+	for city, _ := range s.Addresses {
+		address := s.findFIASInCity(city, street_type, street, house_num, korpus)
+		if address.FIAS != "" {
+			return address
+		}
+	}
+
+	return Address{}
 }

@@ -70,7 +70,7 @@ func CorrectAndGetFIAS(address string, city string) (string, api.CorrectAddress)
 
 	city = getCityName(city)
 	if city == "" {
-		city = city_with_error
+		city = getCityName(city_with_error)
 	}
 	if city != "ANY" {
 		city = strings.ToLower(city)
@@ -90,12 +90,19 @@ func CorrectAndGetFIAS(address string, city string) (string, api.CorrectAddress)
 	if korpus == "" {
 		korpus = "ANY"
 	}
+
+	foundAddress := fiasdata.Storage.GetAddress(city, street_type, street_name, house_number, korpus)
+	if foundAddress.FIAS != "" {
+		correctedAddress := api.CorrectAddress{foundAddress.City, foundAddress.StreetType, foundAddress.FormalName, foundAddress.HouseNum, foundAddress.Korpus}
+		logger.Info.Println(correctedAddress)
+		return foundAddress.FIAS, correctedAddress
+
+	}
+
 	correctedAddress := api.CorrectAddress{city, street_type, street_name, house_number, korpus}
-
 	logger.Info.Println(correctedAddress)
-	fias := fiasdata.Storage.GetFias(city, street_type, street_name, house_number, korpus)
 
-	return fias, correctedAddress
+	return "Not Found", correctedAddress
 }
 
 func SpiltRoadIntoNameAndType(road string) (string, string) {
