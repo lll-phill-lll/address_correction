@@ -1,7 +1,7 @@
 # Here you can place file with addresses and fias numbers.
 
 ## Format:
-csv file with following columns:
+csv files of any name with following columns:
 HOUSEGUID,CITY,STREETTYPE,FORMALNAME,HOUSENUM,KORPUS,HOUSETYPE,STROENIE,STATUS
 Where:
 HOUSEGUID - fias id
