@@ -37,6 +37,7 @@ func CorrectAndGetFIAS(address string, city string) (string, api.CorrectAddress)
 	address = strings.ReplaceAll(address, "№", " ")
 	address = strings.ReplaceAll(address, " стр ", " корпус ")
 	address = strings.ReplaceAll(address, " стр.", " корпус ")
+	address = strings.ReplaceAll(address, " обл ", " область ")
 
 	space := regexp.MustCompile(`\s+`)
 	address = space.ReplaceAllString(address, " ")
