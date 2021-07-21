@@ -77,6 +77,10 @@ func CorrectAndGetFIAS(address string, city string) (string, api.CorrectAddress)
 		city = strings.ToLower(city)
 	}
 
+    if city == "" {
+        city = "ANY"
+    }
+
 	if road != "" {
 		logger.Info.Println("Found road:", road)
 		street_name, street_type = SpiltRoadIntoNameAndType(road)
