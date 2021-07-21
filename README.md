@@ -2,7 +2,7 @@
 
 # About:
 Recieves Russian address string in arbitrary format, standardizes and returnes
-standardized address with FIAS(ФИАС) id of this address. This solution can recognize errors
+standardized address with FIAS ФИАС id of this address. This solution can recognize errors
 or misspellings in address (see in examples). Also it can parse non-trivial addresses
 
 
