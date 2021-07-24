@@ -114,8 +114,8 @@ Response:
 
 # To run on linux:
 1. `cd binary`
-2. `./linux`
-This command will run the server with config file from `binary/config.yaml`.
+2. `./corrector corrector_cfg.yaml`
+This command will run the server with config file from `binary/corrector_cfg.yaml`.
 In this file you can change port and fias data file. To see the format go to
 `data/fias`
 

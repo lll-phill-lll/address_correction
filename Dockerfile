@@ -20,8 +20,8 @@ ENV PATH=$PATH:/usr/local/go/bin
 WORKDIR /corrector
 COPY . .
 RUN go build cmd/corrector/main.go
-RUN cp main binary/
+RUN mv main binary/corrector
 
 WORKDIR binary/
 
-CMD ["./main"]
+CMD ["./corrector corrector_cfg.yaml"]

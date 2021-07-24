@@ -1,8 +1,10 @@
 package config
 
 import (
+	"errors"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
+	"os"
 )
 
 type Config struct {
@@ -11,10 +13,13 @@ type Config struct {
 }
 
 func Read() (*Config, error) {
+	if len(os.Args) != 2 {
+		return nil, errors.New("Wrong number of command line arguments, expected path to config file")
+	}
 
 	conf := &Config{}
 
-	yamlFile, err := ioutil.ReadFile("config.yaml")
+	yamlFile, err := ioutil.ReadFile(os.Args[1])
 	if err != nil {
 		return nil, err
 	}
