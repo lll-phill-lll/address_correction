@@ -77,9 +77,9 @@ func CorrectAndGetFIAS(address string, city string) (string, api.CorrectAddress)
 		city = strings.ToLower(city)
 	}
 
-    if city == "" {
-        city = "ANY"
-    }
+	if city == "" {
+		city = "ANY"
+	}
 
 	if road != "" {
 		logger.Info.Println("Found road:", road)
@@ -98,13 +98,31 @@ func CorrectAndGetFIAS(address string, city string) (string, api.CorrectAddress)
 
 	foundAddress := fiasdata.Storage.GetAddress(city, street_type, street_name, house_number, korpus)
 	if foundAddress.FIAS != "" {
-		correctedAddress := api.CorrectAddress{foundAddress.City, foundAddress.StreetType, foundAddress.FormalName, foundAddress.HouseNum, foundAddress.Korpus}
+		compoundAddress := makeCompoundAddress(foundAddress.City, foundAddress.StreetType, foundAddress.FormalName, foundAddress.HouseNum, foundAddress.Korpus)
+		correctedAddress := api.CorrectAddress{foundAddress.City, foundAddress.StreetType, foundAddress.FormalName, foundAddress.HouseNum, foundAddress.Korpus, compoundAddress}
 		logger.Info.Println(correctedAddress)
 		return foundAddress.FIAS, correctedAddress
 
 	}
 
-	correctedAddress := api.CorrectAddress{city, street_type, street_name, house_number, korpus}
+	if city == "ANY" {
+		city = ""
+	}
+	if street_type == "ANY" {
+		street_type = ""
+	}
+	if street_name == "ANY" {
+		street_name = ""
+	}
+	if house_number == "ANY" {
+		house_number = ""
+	}
+	if korpus == "ANY" {
+		korpus = ""
+	}
+
+	compoundAddress := makeCompoundAddress(city, street_type, street_name, house_number, korpus)
+	correctedAddress := api.CorrectAddress{city, street_type, street_name, house_number, korpus, compoundAddress}
 	logger.Info.Println(correctedAddress)
 
 	return "Not Found", correctedAddress
@@ -218,4 +236,8 @@ func getCityName(city string) string {
 	}
 
 	return splitted[1]
+}
+
+func makeCompoundAddress(city, streetType, streetName, houseNumber, korpus string) string {
+	return strings.Join([]string{city, streetType, streetName, houseNumber, korpus}, ",")
 }
