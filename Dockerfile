@@ -24,4 +24,4 @@ RUN mv main binary/corrector
 
 WORKDIR binary/
 
-CMD ["./corrector corrector_cfg.yaml"]
+CMD ["./corrector", "corrector_cfg.yaml"]
